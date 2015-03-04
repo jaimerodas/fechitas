@@ -1,204 +1,202 @@
-(function ( $ ) {
-  $.fn.fechitas = function() {
+(function ($) {
+  $.fn.fechitas = function () {
 
-      var picker, tag, fecha, year, month, day;
+    $('body').append('<div class="fechitas-bg" style="display:none;"></div><div style="display:none;" class="fechitas-container"><div class="fechitas-decade fechitas-panel"><div class="fechitas-decade-years"></div></div><div class="fechitas-year fechitas-panel"><button type="button" class="fechitas-chooseDecade fechitas-choose"></button><div class="fechitas-year-months"></div></div><div class="fechitas-month fechitas-panel"><button type="button" class="fechitas-chooseDecade fechitas-choose"></button><button type="button" class="fechitas-chooseYear fechitas-choose"></button><div class="fechitas-month-days"></div></div></div>');
 
-      $('body').append('<div class="fechitas-bg" style="display:none;"></div><div style="display:none;" class="fechitas-container"><div class="fechitas-decade fechitas-panel"><div class="fechitas-decade-years"></div></div><div class="fechitas-year fechitas-panel"><button type="button" class="fechitas-chooseDecade fechitas-choose"></button><div class="fechitas-year-months"></div></div><div class="fechitas-month fechitas-panel"><button type="button" class="fechitas-chooseDecade fechitas-choose"></button><button type="button" class="fechitas-chooseYear fechitas-choose"></button><div class="fechitas-month-days"></div></div></div>');
+    var picker, tag, fecha, year, month, day,
+      container = $('body').find('.fechitas-container'),
+      bg = container.siblings('.fechitas-bg'),
+      months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
-      container = $('body').find('.fechitas-container');
-      bg = container.siblings('.fechitas-bg');
+    var buildDecade = function (y, isDecade) {
+      isDecade = (isDecade === undefined) ? false : isDecade;
 
-      months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'];
-
-      var buildDecade = function(y, isDecade) {
-        isDecade = (typeof isDecade === "undefined") ? false : isDecade;
-
-        decade = container.find('.fechitas-decade');
+      var dec, i, button,
+        decade = container.find('.fechitas-decade'),
         years = decade.find('.fechitas-decade-years');
 
-        years.html('');
+      years.html('');
 
-        if (isDecade) {
-          dec = y.toString();
-        } else {
-          dec = y.toString().substr(0,3);
+      if (isDecade) {
+        dec = y.toString();
+      } else {
+        dec = y.toString().substr(0, 3);
+      }
+
+      for (i = 0; i < 10; i++) {
+        button = '<button type="button" class="fechitas-chooseYear';
+
+        if (dec + i == year.toString()) {
+          button += ' fechitas-active';
         }
 
-        for (var i = 0; i < 10; i++) {
-          button = '<button type="button" class="fechitas-chooseYear';
+        button += '" value="' + dec + i + '">' + dec + i + '</button>';
 
-          if (dec+i == year.toString()) {
-            button += ' fechitas-active';
-          }
+        years.append(button);
+      }
 
-          button += '" value="'+dec+i+'">'+dec+i+'</button>';
+      dec = parseInt(dec, 10);
+      years.prepend('<button type="button" class="fechitas-chooseDecade fechitas-choose" value="' + (dec - 1) + '">' + (dec - 1) + '0\'s</button><button type="button" class="fechitas-chooseDecade fechitas-choose" value="' + (dec + 1) + '">' + (dec + 1) + '0\'s</button>');
+    };
 
-          years.append(button);
-        }
-
-        dec = parseInt(dec);
-        years.prepend('<button type="button" class="fechitas-chooseDecade fechitas-choose" value="'+(dec-1)+'">'+(dec-1)+'0\'s</button><button type="button" class="fechitas-chooseDecade fechitas-choose" value="'+(dec+1)+'">'+(dec+1)+'0\'s</button>')
-      };
-
-      var buildYear = function(y, m) {
-        annum = container.find('.fechitas-year');
+    var buildYear = function (y) {
+      var i, button,
+        annum = container.find('.fechitas-year'),
         meses = annum.find('.fechitas-year-months').html('');
 
-        dec = y.toString().substr(0,3)
-        annum.find('.fechitas-chooseDecade').text(y).val(dec);
+      var dec = y.toString().substr(0, 3);
+      annum.find('.fechitas-chooseDecade').text(y).val(dec);
 
-        for (var i = 0; i < 12; i++) {
-          button = '<button class="fechitas-chooseMonth';
+      for (i = 0; i < 12; i++) {
+        button = '<button class="fechitas-chooseMonth';
 
-          if (i == month) {
-            button += ' fechitas-active';
-          }
-
-          button += '" value="'+i+'" type="button">'+months[i]+'</button>';
-
-          meses.append(button);
+        if (i == month) {
+          button += ' fechitas-active';
         }
-      };
 
-      var updateNav = function() {
-        dec = year.toString().substr(0,3);
-        container.find('.fechitas-year').find('.fechitas-chooseDecade').val(dec).text(year);
-        container.find('.fechitas-month').find('.fechitas-chooseDecade').val(dec).text(year);
-        container.find('.fechitas-month').find('.fechitas-chooseYear').val(year).text(months[month]);
+        button += '" value="' + i + '" type="button">' + months[i] + '</button>';
+
+        meses.append(button);
       }
+    };
 
-      // http://stackoverflow.com/questions/1810984/number-of-days-in-any-month
-      var daysInMonth = function(y, m) {
-        if( /8|3|5|10/.test( m ) ) return 30;
-        if( m != 1 ) return 31;
-        if( ( y % 4 == 0 && y % 100 != 0 ) || y % 400 == 0 ) return 29;
-        return 28;
-      }
+    var updateNav = function () {
+      var dec = year.toString().substr(0, 3);
+      container.find('.fechitas-year').find('.fechitas-chooseDecade').val(dec).text(year);
+      container.find('.fechitas-month').find('.fechitas-chooseDecade').val(dec).text(year);
+      container.find('.fechitas-month').find('.fechitas-chooseYear').val(year).text(months[month]);
+    };
 
-      var buildMonth = function(y, m) {
-        d = daysInMonth(y, m);
-        meses = container.find('.fechitas-month');
+    // http://stackoverflow.com/questions/1810984/number-of-days-in-any-month
+    var daysInMonth = function (y, m) {
+      if (/8|3|5|10/.test(m)) {return 30; }
+      if (m != 1) {return 31; }
+      if ((y % 4 === 0 && y % 100 !== 0) || y % 400 === 0) {return 29; }
+      return 28;
+    };
+
+    var buildMonth = function (y, m) {
+      var i, button,
+        d = daysInMonth(y, m),
+        meses = container.find('.fechitas-month'),
         dias = meses.find('.fechitas-month-days');
 
-        dias.html('');
+      dias.html('');
 
-        for (var i = 1; i <= d; i++) {
-          button = '<button type="button" class="fechitas-chooseDay';
+      for (i = 1; i <= d; i++) {
+        button = '<button type="button" class="fechitas-chooseDay';
 
-          if (i == day) {
-            button += ' fechitas-active';
-          }
-
-          button += '" value="'+i+'">'+i+'</button>';
-          dias.append(button);
+        if (i == day) {
+          button += ' fechitas-active';
         }
+
+        button += '" value="' + i + '">' + i + '</button>';
+        dias.append(button);
+      }
+    };
+
+    var pad = function (n) {
+      if (n < 10) {
+        return '0' + n;
+      }
+      return n;
+    };
+
+    var activa = function (o) {
+      $(o).siblings().removeClass('fechitas-active');
+      $(o).addClass('fechitas-active');
+    };
+
+    var showPanel = function (p) {
+      var panel = container.find(p);
+      panel.siblings().hide();
+      panel.show();
+    };
+
+    var updatePicker = function (p) {
+      picker = $(p);
+      tag = picker.get(0).nodeName.toLowerCase();
+
+      if (tag == 'input') {
+        fecha = picker.val();
+      } else {
+        fecha = picker.html();
       }
 
-      var pad = function(n) {
-        if (n<10) {
-          return '0'+n;
-        }
-        return n;
-      };
-
-      var activa = function(o) {
-        $(o).siblings().removeClass('fechitas-active')
-        $(o).addClass('fechitas-active');
-      };
-
-      var showPanel = function(p) {
-        panel = container.find(p);
-        panel.siblings().hide();
-        panel.show();
-      };
-
-      var updatePicker = function(p) {
-        picker = $(p)
-        tag = picker.get(0).nodeName.toLowerCase();
-
-        if (tag == 'input') {
-          fecha = picker.val();
-        } else {
-          fecha = picker.html();
-        }
-
-        if (fecha == '') {
-          fecha = new Date();
-        } else {
-          fecha = new Date(fecha);
-        }
-
-        console.log(fecha);
-
-        year = fecha.getUTCFullYear();
-        month = fecha.getUTCMonth();
-        day = fecha.getUTCDate();
-
-        buildDecade(year);
-        buildYear(year, month);
-        buildMonth(year, month);
-        updateNav();
+      if (fecha === '') {
+        fecha = new Date();
+      } else {
+        fecha = new Date(fecha);
       }
 
+      year = fecha.getUTCFullYear();
+      month = fecha.getUTCMonth();
+      day = fecha.getUTCDate();
+
+      buildDecade(year);
+      buildYear(year);
+      buildMonth(year, month);
+      updateNav();
+    };
+
+    updatePicker(this);
+
+
+    picker.on('focus', function () {
       updatePicker(this);
+      showPanel('.fechitas-month');
+      container.fadeIn(500);
+      bg.show();
+    });
 
+    bg.on('click', function () {
+      container.fadeOut(300);
+      bg.hide();
+    });
 
-      picker.on('focus', function() {
-        updatePicker(this);
-        showPanel('.fechitas-month');
-        container.fadeIn(500);
-        bg.show();
-      })
+    container.on('click', '.fechitas-chooseDecade', function () {
+      var dec = parseInt($(this).val(), 10);
+      buildDecade(dec, true);
+      showPanel('.fechitas-decade');
+    });
 
-      bg.on('click', function() {
-        container.fadeOut(300);
-        bg.hide();
-      });
+    container.on('click', '.fechitas-chooseYear', function () {
+      year = parseInt($(this).val(), 10);
 
-      container.on('click', '.fechitas-chooseDecade', function() {
-        dec = parseInt($(this).val());
-        buildDecade(dec, true);
-        showPanel('.fechitas-decade');
-      });
-
-      container.on('click', '.fechitas-chooseYear', function() {
-        year = parseInt($(this).val());
-
-        if ($(this).parent().hasClass('.fechitas-month')) {
-          activa(this);
-        }
-
-        updateNav();
-        showPanel('.fechitas-year');
-      });
-
-      container.on('click', '.fechitas-chooseMonth', function() {
-        month = parseInt($(this).val());
+      if ($(this).parent().hasClass('.fechitas-month')) {
         activa(this);
-        buildMonth(year, month);
-        updateNav();
-        showPanel('.fechitas-month');
-      });
+      }
 
-      container.on('click', '.fechitas-chooseDay', function() {
-        day = parseInt($(this).val());
+      updateNav();
+      showPanel('.fechitas-year');
+    });
 
-        activa(this);
-        fecha = new Date(year, month, day);
-        isodate = fecha.getUTCFullYear()+'-'+pad(fecha.getUTCMonth()+1)+'-'+pad(fecha.getUTCDate());
+    container.on('click', '.fechitas-chooseMonth', function () {
+      month = parseInt($(this).val(), 10);
+      activa(this);
+      buildMonth(year, month);
+      updateNav();
+      showPanel('.fechitas-month');
+    });
 
-        if (tag == 'input') {
-          picker.val(isodate);
-        } else {
-          picker.text(isodate);
-        }
+    container.on('click', '.fechitas-chooseDay', function () {
+      day = parseInt($(this).val(), 10);
 
-        container.hide();
-        bg.hide();
-      });
+      activa(this);
+      fecha = new Date(year, month, day);
+      var isodate = fecha.getUTCFullYear() + '-' + pad(fecha.getUTCMonth() + 1) + '-' + pad(fecha.getUTCDate());
 
-      return this;
+      if (tag == 'input') {
+        picker.val(isodate);
+      } else {
+        picker.text(isodate);
+      }
 
+      container.hide();
+      bg.hide();
+    });
+
+    return this;
   };
 
-}( jQuery ));
+}(jQuery));
