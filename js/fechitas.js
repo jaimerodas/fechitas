@@ -10,7 +10,7 @@
       // veryverbose -> 31 diciembre 2014
       format: 'normal',
       capitalized: false
-    }, options );
+    }, options);
 
     if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
       return this;
@@ -23,9 +23,9 @@
       months = 'enero febrero marzo abril mayo junio julio agosto septiembre octubre noviembre diciembre'.split(' '),
       monthsS = 'ene feb mar abr may jun jul ago sep oct nov dic'.split(' ');
 
-    String.prototype.capitalize = function() {
+    String.prototype.capitalize = function () {
       return this.charAt(0).toUpperCase() + this.slice(1);
-    }
+    };
 
     var buildDecade = function (y, isDecade) {
       isDecade = (isDecade === undefined) ? false : isDecade;
@@ -136,7 +136,7 @@
       picker = $(p);
       tag = picker.get(0).nodeName.toLowerCase();
 
-      fechaJSON = picker.data('fecha');
+      var fechaJSON = picker.data('fecha');
 
       if (!fechaJSON) {
         if (tag == 'input') {
@@ -151,7 +151,7 @@
           fecha = new Date(fecha);
         }
 
-        if ( Object.prototype.toString.call(fecha) !== "[object Date]" || isNaN(fecha.getTime())) {
+        if (Object.prototype.toString.call(fecha) !== "[object Date]" || isNaN(fecha.getTime())) {
           fecha = new Date();
         }
       } else {
@@ -182,7 +182,7 @@
 
       if (settings.format == 'veryverbose') {
         m = months[fecha.getMonth()];
-        s = ' '
+        s = ' ';
       }
 
       if ((settings.format == 'verbose' || settings.format == 'veryverbose') && settings.capitalized) {
@@ -190,16 +190,16 @@
       }
 
       switch (settings.format) {
-        case 'normal':
-          r = fecha.getUTCFullYear() + s + pad(fecha.getUTCMonth() + 1);
-          break;
-        case 'inverse':
-          r = pad(fecha.getUTCMonth() + 1) + s + fecha.getUTCFullYear();
-          break;
-        case 'verbose':
-        case 'veryverbose':
-          r = m + s + fecha.getUTCFullYear()
-          break;
+      case 'normal':
+        r = fecha.getUTCFullYear() + s + pad(fecha.getUTCMonth() + 1);
+        break;
+      case 'inverse':
+        r = pad(fecha.getUTCMonth() + 1) + s + fecha.getUTCFullYear();
+        break;
+      case 'verbose':
+      case 'veryverbose':
+        r = m + s + fecha.getUTCFullYear();
+        break;
       }
 
       if (settings.type == 'day') {
@@ -211,7 +211,7 @@
       }
 
       return r;
-    }
+    };
 
     var colocaFecha = function () {
       fecha = new Date(year, month, day);
@@ -227,7 +227,7 @@
       container.fadeOut(300);
 
       picker.trigger('fechitasDateChange', [texto, fecha.toJSON]);
-    }
+    };
 
     updatePicker(this);
 
