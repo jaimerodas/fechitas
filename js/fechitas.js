@@ -1,31 +1,12 @@
 (function ( $ ) {
   $.fn.fechitas = function() {
-      var elObjeto = this;
-      elObjeto.parent().css('position', 'relative');
-      tag = elObjeto.get(0).nodeName.toLowerCase();
 
-      // Es un input?
-      if (tag == 'input') {
-        fecha = elObjeto.val();
-      } else {
-        fecha = elObjeto.html();
-      }
+      var picker, tag, fecha, year, month, day;
 
-      // Lo podemos convertir a fecha?
-      if (fecha == '') {
-        fecha = new Date();
-      } else {
-        fecha = Date.parse(fecha);
-      }
+      $('body').append('<div class="fechitas-bg" style="display:none;"></div><div style="display:none;" class="fechitas-container"><div class="fechitas-decade fechitas-panel"><div class="fechitas-decade-years"></div></div><div class="fechitas-year fechitas-panel"><button type="button" class="fechitas-chooseDecade fechitas-choose"></button><div class="fechitas-year-months"></div></div><div class="fechitas-month fechitas-panel"><button type="button" class="fechitas-chooseDecade fechitas-choose"></button><button type="button" class="fechitas-chooseYear fechitas-choose"></button><div class="fechitas-month-days"></div></div></div>');
 
-      year = fecha.getFullYear();
-      month = fecha.getMonth();
-      day = fecha.getDate();
-
-      elObjeto.parent().append('<div class="fechitas-bg" style="display:none;"></div><div style="display:none;" class="fechitas-container"><div class="fechitas-decade fechitas-panel"><div class="fechitas-decade-years"></div></div><div class="fechitas-year fechitas-panel"><button type="button" class="fechitas-chooseDecade fechitas-choose"></button><div class="fechitas-year-months"></div></div><div class="fechitas-month fechitas-panel"><button type="button" class="fechitas-chooseDecade fechitas-choose"></button><button type="button" class="fechitas-chooseYear fechitas-choose"></button><div class="fechitas-month-days"></div></div></div>');
-
-      container = elObjeto.parent().find('.fechitas-container');
-      bg = elObjeto.parent().find('.fechitas-bg');
+      container = $('body').find('.fechitas-container');
+      bg = container.siblings('.fechitas-bg');
 
       months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre','Octubre', 'Noviembre', 'Diciembre'];
 
@@ -131,12 +112,39 @@
         panel.show();
       };
 
-      buildDecade(year);
-      buildYear(year, month);
-      buildMonth(year, month);
-      updateNav();
+      var updatePicker = function(p) {
+        picker = $(p)
+        tag = picker.get(0).nodeName.toLowerCase();
 
-      elObjeto.on('focus', function() {
+        if (tag == 'input') {
+          fecha = picker.val();
+        } else {
+          fecha = picker.html();
+        }
+
+        if (fecha == '') {
+          fecha = new Date();
+        } else {
+          fecha = new Date(fecha);
+        }
+
+        console.log(fecha);
+
+        year = fecha.getUTCFullYear();
+        month = fecha.getUTCMonth();
+        day = fecha.getUTCDate();
+
+        buildDecade(year);
+        buildYear(year, month);
+        buildMonth(year, month);
+        updateNav();
+      }
+
+      updatePicker(this);
+
+
+      picker.on('focus', function() {
+        updatePicker(this);
         showPanel('.fechitas-month');
         container.fadeIn(500);
         bg.show();
@@ -176,16 +184,21 @@
         day = parseInt($(this).val());
 
         activa(this);
+        fecha = new Date(year, month, day);
+        isodate = fecha.getUTCFullYear()+'-'+pad(fecha.getUTCMonth()+1)+'-'+pad(fecha.getUTCDate());
 
         if (tag == 'input') {
-          fecha = new Date(year, month, day);
-          elObjeto.val(fecha.getFullYear()+'-'+pad(fecha.getMonth()+1)+'-'+pad(fecha.getDate()));
+          picker.val(isodate);
+        } else {
+          picker.text(isodate);
         }
 
         container.hide();
+        bg.hide();
       });
 
       return this;
+
   };
 
 }( jQuery ));
