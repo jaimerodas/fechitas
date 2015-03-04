@@ -1,11 +1,10 @@
 (function ($) {
   $.fn.fechitas = function () {
 
-    $('body').append('<div class="fechitas-bg" style="display:none;"></div><div style="display:none;" class="fechitas-container"><div class="fechitas-decade fechitas-panel"><div class="fechitas-decade-years"></div></div><div class="fechitas-year fechitas-panel"><button type="button" class="fechitas-chooseDecade fechitas-choose"></button><div class="fechitas-year-months"></div></div><div class="fechitas-month fechitas-panel"><button type="button" class="fechitas-chooseDecade fechitas-choose"></button><button type="button" class="fechitas-chooseYear fechitas-choose"></button><div class="fechitas-month-days"></div></div></div>');
+    $('body').append('<div class="fechitas-container" style="display:none;"><div class="fechitas-box"><div class="fechitas-decade fechitas-panel"><div class="fechitas-decade-years"></div></div><div class="fechitas-year fechitas-panel"><button type="button" class="fechitas-chooseDecade fechitas-choose"></button><div class="fechitas-year-months"></div></div><div class="fechitas-month fechitas-panel"><button type="button" class="fechitas-chooseDecade fechitas-choose"></button><button type="button" class="fechitas-chooseYear fechitas-choose"></button><div class="fechitas-month-days"></div></div></div></div>');
 
     var picker, tag, fecha, year, month, day,
       container = $('body').find('.fechitas-container'),
-      bg = container.siblings('.fechitas-bg'),
       months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
     var buildDecade = function (y, isDecade) {
@@ -146,21 +145,21 @@
       updatePicker(this);
       showPanel('.fechitas-month');
       container.fadeIn(500);
-      bg.show();
     });
 
-    bg.on('click', function () {
+    container.on('click', function () {
       container.fadeOut(300);
-      bg.hide();
+      e
     });
 
-    container.on('click', '.fechitas-chooseDecade', function () {
+    container.on('click', '.fechitas-chooseDecade', function (event) {
       var dec = parseInt($(this).val(), 10);
       buildDecade(dec, true);
       showPanel('.fechitas-decade');
+      event.stopPropagation();
     });
 
-    container.on('click', '.fechitas-chooseYear', function () {
+    container.on('click', '.fechitas-chooseYear', function (event) {
       year = parseInt($(this).val(), 10);
 
       if ($(this).parent().hasClass('.fechitas-month')) {
@@ -169,14 +168,16 @@
 
       updateNav();
       showPanel('.fechitas-year');
+      event.stopPropagation();
     });
 
-    container.on('click', '.fechitas-chooseMonth', function () {
+    container.on('click', '.fechitas-chooseMonth', function (event) {
       month = parseInt($(this).val(), 10);
       activa(this);
       buildMonth(year, month);
       updateNav();
       showPanel('.fechitas-month');
+      event.stopPropagation();
     });
 
     container.on('click', '.fechitas-chooseDay', function () {
