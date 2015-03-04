@@ -18,11 +18,11 @@
         fecha = Date.parse(fecha);
       }
 
-      year = fecha.getFullYear();
-      month = fecha.getMonth();
-      day = fecha.getDay();
+      year = fecha.getUTCFullYear();
+      month = fecha.getUTCMonth();
+      day = fecha.getUTCDate();
 
-      elObjeto.parent().append('<div class="fechitas-container"><div class="fechitas-decade"><div class="fechitas-decade-years"></div></div><div class="fechitas-year"><button type="button" class="fechitas-chooseDecade"></button><div class="fechitas-year-months"></div></div><div class="fechitas-month"><button type="button" class="fechitas-chooseDecade"></button><button type="button" class="fechitas-chooseYear"></button><div class="fechitas-month-days"></div></div></div>');
+      elObjeto.parent().append('<div style="display:none;" class="fechitas-container"><button type="button" class="fechitas-close">x</button><div class="fechitas-decade"><div class="fechitas-decade-years"></div></div><div class="fechitas-year"><button type="button" class="fechitas-chooseDecade"></button><div class="fechitas-year-months"></div></div><div class="fechitas-month"><button type="button" class="fechitas-chooseDecade"></button><button type="button" class="fechitas-chooseYear"></button><div class="fechitas-month-days"></div></div></div>');
 
       container = elObjeto.parent().find('.fechitas-container');
 
@@ -105,6 +105,14 @@
       buildYear(year, month);
       buildMonth(year, month);
 
+      elObjeto.on('focus', function() {
+        container.show();
+      })
+
+      container.on('click', '.fechitas-close', function() {
+        container.hide();
+      });
+
       container.on('click', '.fechitas-chooseDecade', function() {
         dec = parseInt($(this).val());
         buildDecade(dec, true);
@@ -130,6 +138,8 @@
           fecha = new Date(year, month, day);
           elObjeto.val(fecha.getUTCFullYear()+'-'+pad(fecha.getUTCMonth()+1)+'-'+pad(fecha.getUTCDate()));
         }
+
+        container.hide();
       });
 
       return this;
