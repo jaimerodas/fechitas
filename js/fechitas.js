@@ -193,8 +193,7 @@
         picker.text(isodate);
       }
 
-      container.hide();
-      bg.hide();
+      container.fadeOut(300);
     });
 
     return this;
