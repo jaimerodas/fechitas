@@ -18,11 +18,11 @@
         fecha = Date.parse(fecha);
       }
 
-      year = fecha.getUTCFullYear();
-      month = fecha.getUTCMonth();
-      day = fecha.getUTCDate();
+      year = fecha.getFullYear();
+      month = fecha.getMonth();
+      day = fecha.getDate();
 
-      elObjeto.parent().append('<div class="fechitas-bg" style="display:none;"></div><div style="display:none;" class="fechitas-container"><div class="fechitas-decade fechitas-panel"><div class="fechitas-decade-years"></div></div><div class="fechitas-year fechitas-panel"><button type="button" class="fechitas-chooseDecade"></button><div class="fechitas-year-months"></div></div><div class="fechitas-month fechitas-panel"><button type="button" class="fechitas-chooseDecade"></button><button type="button" class="fechitas-chooseYear"></button><div class="fechitas-month-days"></div></div></div>');
+      elObjeto.parent().append('<div class="fechitas-bg" style="display:none;"></div><div style="display:none;" class="fechitas-container"><div class="fechitas-decade fechitas-panel"><div class="fechitas-decade-years"></div></div><div class="fechitas-year fechitas-panel"><button type="button" class="fechitas-chooseDecade fechitas-choose"></button><div class="fechitas-year-months"></div></div><div class="fechitas-month fechitas-panel"><button type="button" class="fechitas-chooseDecade fechitas-choose"></button><button type="button" class="fechitas-chooseYear fechitas-choose"></button><div class="fechitas-month-days"></div></div></div>');
 
       container = elObjeto.parent().find('.fechitas-container');
       bg = elObjeto.parent().find('.fechitas-bg');
@@ -56,7 +56,7 @@
         }
 
         dec = parseInt(dec);
-        years.prepend('<button type="button" class="fechitas-chooseDecade" value="'+(dec-1)+'">'+(dec-1)+'0\'s</button><button type="button" class="fechitas-chooseDecade" value="'+(dec+1)+'">'+(dec+1)+'0\'s</button>')
+        years.prepend('<button type="button" class="fechitas-chooseDecade fechitas-choose" value="'+(dec-1)+'">'+(dec-1)+'0\'s</button><button type="button" class="fechitas-chooseDecade fechitas-choose" value="'+(dec+1)+'">'+(dec+1)+'0\'s</button>')
       };
 
       var buildYear = function(y, m) {
@@ -84,7 +84,6 @@
         container.find('.fechitas-year').find('.fechitas-chooseDecade').val(dec).text(year);
         container.find('.fechitas-month').find('.fechitas-chooseDecade').val(dec).text(year);
         container.find('.fechitas-month').find('.fechitas-chooseYear').val(year).text(months[month]);
-        console.log(dec, year);
       }
 
       // http://stackoverflow.com/questions/1810984/number-of-days-in-any-month
@@ -180,7 +179,7 @@
 
         if (tag == 'input') {
           fecha = new Date(year, month, day);
-          elObjeto.val(fecha.getUTCFullYear()+'-'+pad(fecha.getUTCMonth()+1)+'-'+pad(fecha.getUTCDate()));
+          elObjeto.val(fecha.getFullYear()+'-'+pad(fecha.getMonth()+1)+'-'+pad(fecha.getDate()));
         }
 
         container.hide();
