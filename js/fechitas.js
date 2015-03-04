@@ -1,11 +1,18 @@
 (function ($) {
-  $.fn.fechitas = function () {
+  $.fn.fechitas = function (options) {
 
-    function isMobile() {
-      return (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
-    }
+    var settings = $.extend({
+      // day or month; eventually year also
+      type: 'month',
+      // normal -> 2014-12-31
+      // inverse -> 31-12-2014
+      // verbose -> 31-dic-2014
+      // veryverbose -> 31 diciembre 2014
+      format: 'verbose',
+      capitalized: false
+    }, options );
 
-    if (isMobile()) {
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
       return this;
     }
 
@@ -13,7 +20,12 @@
 
     var picker, tag, fecha, year, month, day,
       container = $('body').find('.fechitas-container'),
-      months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+      months = 'enero febrero marzo abril mayo junio julio agosto septiembre octubre noviembre diciembre'.split(' '),
+      monthsS = 'ene feb mar abr may jun jul ago sep oct nov dic'.split(' ');
+
+    String.prototype.capitalize = function() {
+      return this.charAt(0).toUpperCase() + this.slice(1);
+    }
 
     var buildDecade = function (y, isDecade) {
       isDecade = (isDecade === undefined) ? false : isDecade;
@@ -61,7 +73,7 @@
           button += ' fechitas-active';
         }
 
-        button += '" value="' + i + '" type="button">' + months[i] + '</button>';
+        button += '" value="' + i + '" type="button">' + months[i].capitalize() + '</button>';
 
         meses.append(button);
       }
@@ -71,7 +83,7 @@
       var dec = year.toString().substr(0, 3);
       container.find('.fechitas-year').find('.fechitas-chooseDecade').val(dec).text(year);
       container.find('.fechitas-month').find('.fechitas-chooseDecade').val(dec).text(year);
-      container.find('.fechitas-month').find('.fechitas-chooseYear').val(year).text(months[month]);
+      container.find('.fechitas-month').find('.fechitas-chooseYear').val(year).text(months[month].capitalize());
     };
 
     // http://stackoverflow.com/questions/1810984/number-of-days-in-any-month
@@ -124,16 +136,26 @@
       picker = $(p);
       tag = picker.get(0).nodeName.toLowerCase();
 
-      if (tag == 'input') {
-        fecha = picker.val();
-      } else {
-        fecha = picker.html();
-      }
+      fechaJSON = picker.data('fecha');
 
-      if (fecha === '') {
-        fecha = new Date();
+      if (!fechaJSON) {
+        if (tag == 'input') {
+          fecha = picker.val();
+        } else {
+          fecha = picker.html();
+        }
+
+        if (fecha === '') {
+          fecha = new Date();
+        } else {
+          fecha = new Date(fecha);
+        }
+
+        if ( Object.prototype.toString.call(fecha) !== "[object Date]" || isNaN(fecha.getTime())) {
+          fecha = new Date();
+        }
       } else {
-        fecha = new Date(fecha);
+        fecha = new Date(fechaJSON);
       }
 
       year = fecha.getUTCFullYear();
@@ -142,22 +164,85 @@
 
       buildDecade(year);
       buildYear(year);
-      buildMonth(year, month);
-      updateNav();
+
+      if (settings.type == 'day') {
+        buildMonth(year, month);
+        updateNav();
+      }
     };
+
+    var generaFecha = function () {
+      var m,
+        r = 'invalid format',
+        s = '-';
+
+      if (settings.format == 'verbose') {
+        m = monthsS[fecha.getMonth()];
+      }
+
+      if (settings.format == 'veryverbose') {
+        m = months[fecha.getMonth()];
+        s = ' '
+      }
+
+      if ((settings.format == 'verbose' || settings.format == 'veryverbose') && settings.capitalized) {
+        m = m.capitalize();
+      }
+
+      switch (settings.format) {
+        case 'normal':
+          r = fecha.getUTCFullYear() + s + pad(fecha.getUTCMonth() + 1);
+          break;
+        case 'inverse':
+          r = pad(fecha.getUTCMonth() + 1) + s + fecha.getUTCFullYear();
+          break;
+        case 'verbose':
+        case 'veryverbose':
+          r = m + s + fecha.getUTCFullYear()
+          break;
+      }
+
+      if (settings.type == 'day') {
+        if (settings.format == 'normal') {
+          r += s + pad(fecha.getUTCDate());
+        } else {
+          r = pad(fecha.getUTCDate()) + s + r;
+        }
+      }
+
+      return r;
+    }
+
+    var colocaFecha = function () {
+      fecha = new Date(year, month, day);
+      var texto = generaFecha();
+
+      if (tag == 'input') {
+        picker.val(texto);
+      } else {
+        picker.text(texto);
+      }
+
+      picker.data('fecha', fecha.toJSON());
+      container.fadeOut(300);
+    }
 
     updatePicker(this);
 
-
     picker.on('focus', function () {
       updatePicker(this);
-      showPanel('.fechitas-month');
+
+      if (settings.type == 'month') {
+        showPanel('.fechitas-year');
+      } else {
+        showPanel('.fechitas-month');
+      }
+
       container.fadeIn(500);
     });
 
     container.on('click', function () {
       container.fadeOut(300);
-      e
     });
 
     container.on('click', '.fechitas-chooseDecade', function (event) {
@@ -182,6 +267,12 @@
     container.on('click', '.fechitas-chooseMonth', function (event) {
       month = parseInt($(this).val(), 10);
       activa(this);
+
+      if (settings.type == 'month') {
+        colocaFecha();
+        return this;
+      }
+
       buildMonth(year, month);
       updateNav();
       showPanel('.fechitas-month');
@@ -190,18 +281,8 @@
 
     container.on('click', '.fechitas-chooseDay', function () {
       day = parseInt($(this).val(), 10);
-
       activa(this);
-      fecha = new Date(year, month, day);
-      var isodate = fecha.getUTCFullYear() + '-' + pad(fecha.getUTCMonth() + 1) + '-' + pad(fecha.getUTCDate());
-
-      if (tag == 'input') {
-        picker.val(isodate);
-      } else {
-        picker.text(isodate);
-      }
-
-      container.fadeOut(300);
+      colocaFecha();
     });
 
     return this;
