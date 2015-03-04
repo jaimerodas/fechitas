@@ -225,6 +225,8 @@
 
       picker.data('fecha', fecha.toJSON());
       container.fadeOut(300);
+
+      picker.trigger('fechitasDateChange', [texto, fecha.toJSON]);
     }
 
     updatePicker(this);
