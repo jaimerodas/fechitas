@@ -3,12 +3,12 @@
 
     var settings = $.extend({
       // day or month; eventually year also
-      type: 'month',
+      type: 'day',
       // normal -> 2014-12-31
       // inverse -> 31-12-2014
       // verbose -> 31-dic-2014
       // veryverbose -> 31 diciembre 2014
-      format: 'verbose',
+      format: 'normal',
       capitalized: false
     }, options );
 
