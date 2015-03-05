@@ -229,9 +229,7 @@
       picker.trigger('fechitasDateChange', [texto, fecha.toJSON]);
     };
 
-    updatePicker(this);
-
-    picker.on('focus', function () {
+    var activar = function () {
       updatePicker(this);
 
       if (settings.type == 'month') {
@@ -241,7 +239,12 @@
       }
 
       container.fadeIn(500);
-    });
+    };
+
+    updatePicker(this);
+
+    picker.on('focus', activar);
+    picker.on('click', activar);
 
     container.on('click', function () {
       container.fadeOut(300);
