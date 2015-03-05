@@ -79,13 +79,33 @@ var pad = function (n) {
       return this;
     }
 
-    $('body').append('<div class="fechitas-container" style="display:none;"><div class="fechitas-box"><div class="fechitas-decade fechitas-panel"><div class="fechitas-decade-years"></div></div><div class="fechitas-year fechitas-panel"><button type="button" class="fechitas-chooseDecade fechitas-choose"></button><div class="fechitas-year-months"></div></div><div class="fechitas-month fechitas-panel"><button type="button" class="fechitas-chooseDecade fechitas-choose"></button><button type="button" class="fechitas-chooseYear fechitas-choose"></button><div class="fechitas-month-days"></div></div></div></div>');
+    $('body').append('<div class="fechitas-container" style="display:none;"><div class="fechitas-box"><div class="fechitas-decade fechitas-panel"><div class="fechitas-decade-years"></div></div><div class="fechitas-year fechitas-panel"><button type="button" class="fechitas-chooseDecade fechitas-choose"></button><div class="fechitas-year-months"></div></div><div class="fechitas-month fechitas-panel"><button type="button" class="fechitas-chooseDecade fechitas-choose"></button><button type="button" class="fechitas-chooseYear fechitas-choose"></button><div class="fechitas-month-week" /><div class="fechitas-month-days"></div></div></div></div>');
 
     var picker, tag, fecha, year, month, day,
       container = $('body').find('.fechitas-container'),
+      semana = 'D L M M J V S'.split(' '),
       months = 'enero febrero marzo abril mayo junio julio agosto septiembre octubre noviembre diciembre'.split(' '),
-      monthsS = 'ene feb mar abr may jun jul ago sep oct nov dic'.split(' ');
+      monthsS = 'ene feb mar abr may jun jul ago sep oct nov dic'.split(' '),
+      fmonth = container.find('.fechitas-month-week');
 
+    semana.forEach(function (d) {
+      fmonth.append('<div class="fechitas-week-day">' + d + '</div>');
+    });
+
+    var updateNav = function () {
+      var dec = year.toString().substr(0, 3);
+      container.find('.fechitas-year').find('.fechitas-chooseDecade').val(dec).text(year);
+      container.find('.fechitas-month').find('.fechitas-chooseDecade').val(dec).text(year);
+      container.find('.fechitas-month').find('.fechitas-chooseYear').val(year).text(months[month].capitalize());
+    };
+
+    // http://stackoverflow.com/questions/1810984/number-of-days-in-any-month
+    var daysInMonth = function (y, m) {
+      if (/8|3|5|10/.test(m)) {return 30; }
+      if (m != 1) {return 31; }
+      if ((y % 4 === 0 && y % 100 !== 0) || y % 400 === 0) {return 29; }
+      return 28;
+    };
 
     var buildDecade = function (y, isDecade) {
       isDecade = (isDecade === undefined) ? false : isDecade;
@@ -139,28 +159,24 @@ var pad = function (n) {
       }
     };
 
-    var updateNav = function () {
-      var dec = year.toString().substr(0, 3);
-      container.find('.fechitas-year').find('.fechitas-chooseDecade').val(dec).text(year);
-      container.find('.fechitas-month').find('.fechitas-chooseDecade').val(dec).text(year);
-      container.find('.fechitas-month').find('.fechitas-chooseYear').val(year).text(months[month].capitalize());
-    };
-
-    // http://stackoverflow.com/questions/1810984/number-of-days-in-any-month
-    var daysInMonth = function (y, m) {
-      if (/8|3|5|10/.test(m)) {return 30; }
-      if (m != 1) {return 31; }
-      if ((y % 4 === 0 && y % 100 !== 0) || y % 400 === 0) {return 29; }
-      return 28;
-    };
-
     var buildMonth = function (y, m) {
-      var i, button,
+      var i, j, k, button,
         d = daysInMonth(y, m),
         meses = container.find('.fechitas-month'),
         dias = meses.find('.fechitas-month-days');
 
       dias.html('');
+
+      j = new Date(year, month, 1);
+      j = j.getDay();
+
+      if (j > 0) {
+        for (k = 0; k < j; k++) {
+          dias.append('<div class="empty">');
+        }
+      }
+
+      console.log(j);
 
       for (i = 1; i <= d; i++) {
         button = '<button type="button" class="fechitas-chooseDay';
@@ -234,10 +250,10 @@ var pad = function (n) {
         picker.text(texto);
       }
 
-      picker.data('fecha', fecha.toJSON());
+      picker.data('fecha', fecha.formatFechitas());
       container.fadeOut(300);
 
-      picker.trigger('fechitasDateChange', [texto, fecha.toJSON]);
+      picker.trigger('fechitasDateChange', [texto, fecha.formatFechitas()]);
     };
 
     var activar = function () {
