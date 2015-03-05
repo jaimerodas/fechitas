@@ -79,7 +79,7 @@ var pad = function (n) {
       return this;
     }
 
-    $('body').append('<div class="fechitas-container" style="display:none;"><div class="fechitas-box"><div class="fechitas-decade fechitas-panel"><div class="fechitas-decade-years"></div></div><div class="fechitas-year fechitas-panel"><button type="button" class="fechitas-chooseDecade fechitas-choose"></button><div class="fechitas-year-months"></div></div><div class="fechitas-month fechitas-panel"><button type="button" class="fechitas-chooseDecade fechitas-choose"></button><button type="button" class="fechitas-chooseYear fechitas-choose"></button><div class="fechitas-month-week" /><div class="fechitas-month-days"></div></div></div></div>');
+    $('body').append('<div class="fechitas-container"><div class="fechitas-box"><div class="fechitas-decade fechitas-panel"><div class="fechitas-decade-years"></div></div><div class="fechitas-year fechitas-panel"><button type="button" class="fechitas-chooseDecade fechitas-choose"></button><div class="fechitas-year-months"></div></div><div class="fechitas-month fechitas-panel"><button type="button" class="fechitas-chooseDecade fechitas-choose"></button><button type="button" class="fechitas-chooseYear fechitas-choose"></button><div class="fechitas-month-week" /><div class="fechitas-month-days"></div></div></div></div>');
 
     var picker, tag, fecha, year, month, day,
       container = $('body').find('.fechitas-container'),
@@ -176,8 +176,6 @@ var pad = function (n) {
         }
       }
 
-      console.log(j);
-
       for (i = 1; i <= d; i++) {
         button = '<button type="button" class="fechitas-chooseDay';
 
@@ -251,7 +249,7 @@ var pad = function (n) {
       }
 
       picker.data('fecha', fecha.formatFechitas());
-      container.fadeOut(300);
+      container.removeClass('visible');
 
       picker.trigger('fechitasDateChange', [texto, fecha.formatFechitas()]);
     };
@@ -265,7 +263,7 @@ var pad = function (n) {
         showPanel('.fechitas-month');
       }
 
-      container.fadeIn(500);
+      container.addClass('visible');
     };
 
     updatePicker(this);
@@ -274,7 +272,7 @@ var pad = function (n) {
     picker.on('click', activar);
 
     container.on('click', function () {
-      container.fadeOut(300);
+      container.removeClass('visible');
     });
 
     container.on('click', '.fechitas-chooseDecade', function (event) {
