@@ -1,0 +1,28 @@
+{
+  "name": "fechitas",
+  "version": "0.2.0",
+  "homepage": "https://jaimerodas.github.io/fechitas",
+  "author": {
+    "name": "Jaime Rodas",
+    "email": "jaime@rodas.mx",
+    "url": "https://github.com/jaimerodas"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jaimerodas/fechitas"
+  },
+  "bugs": "https://github.com/jaimerodas/fechitas/issues",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://jaimerodas.github.io/fechitas/blob/master/LICENSE-MIT"
+    }
+  ],
+  "devDependencies": {
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-contrib-uglify": "~0.2.0",
+    "grunt-contrib-watch": "~0.4.0",
+    "grunt-contrib-cssmin": "~0.12.2",
+    "grunt": "~0.4.5"
+  }
+}
