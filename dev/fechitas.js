@@ -1,4 +1,67 @@
+Date.prototype.formatFechitas = function (options) {
+  var months = 'enero febrero marzo abril mayo junio julio agosto septiembre octubre noviembre diciembre'.split(' '),
+    monthsS = 'ene feb mar abr may jun jul ago sep oct nov dic'.split(' ');
+
+  var settings = $.extend({
+    type: 'day',
+    format: 'normal',
+    capitalized: false
+  }, options);
+
+  var m,
+    r = 'invalid format',
+    s = '-';
+
+  if (settings.format == 'verbose') {
+    m = monthsS[this.getMonth()];
+  }
+
+  if (settings.format == 'veryverbose') {
+    m = months[this.getMonth()];
+    s = ' ';
+  }
+
+  if ((settings.format == 'verbose' || settings.format == 'veryverbose') && settings.capitalized) {
+    m = m.capitalize();
+  }
+
+  switch (settings.format) {
+  case 'normal':
+    r = this.getUTCFullYear() + s + pad(this.getUTCMonth() + 1);
+    break;
+  case 'inverse':
+    r = pad(this.getUTCMonth() + 1) + s + this.getUTCFullYear();
+    break;
+  case 'verbose':
+  case 'veryverbose':
+    r = m + s + this.getUTCFullYear();
+    break;
+  }
+
+  if (settings.type == 'day') {
+    if (settings.format == 'normal') {
+      r += s + pad(this.getUTCDate());
+    } else {
+      r = pad(this.getUTCDate()) + s + r;
+    }
+  }
+
+  return r;
+};
+
+String.prototype.capitalize = function () {
+  return this.charAt(0).toUpperCase() + this.slice(1);
+};
+
+var pad = function (n) {
+  if (n < 10) {
+    return '0' + n;
+  }
+  return n;
+};
+
 (function ($) {
+
   $.fn.fechitas = function (options) {
 
     var settings = $.extend({
@@ -23,9 +86,6 @@
       months = 'enero febrero marzo abril mayo junio julio agosto septiembre octubre noviembre diciembre'.split(' '),
       monthsS = 'ene feb mar abr may jun jul ago sep oct nov dic'.split(' ');
 
-    String.prototype.capitalize = function () {
-      return this.charAt(0).toUpperCase() + this.slice(1);
-    };
 
     var buildDecade = function (y, isDecade) {
       isDecade = (isDecade === undefined) ? false : isDecade;
@@ -114,13 +174,6 @@
       }
     };
 
-    var pad = function (n) {
-      if (n < 10) {
-        return '0' + n;
-      }
-      return n;
-    };
-
     var activa = function (o) {
       $(o).siblings().removeClass('fechitas-active');
       $(o).addClass('fechitas-active');
@@ -171,51 +224,9 @@
       }
     };
 
-    var generaFecha = function () {
-      var m,
-        r = 'invalid format',
-        s = '-';
-
-      if (settings.format == 'verbose') {
-        m = monthsS[fecha.getMonth()];
-      }
-
-      if (settings.format == 'veryverbose') {
-        m = months[fecha.getMonth()];
-        s = ' ';
-      }
-
-      if ((settings.format == 'verbose' || settings.format == 'veryverbose') && settings.capitalized) {
-        m = m.capitalize();
-      }
-
-      switch (settings.format) {
-      case 'normal':
-        r = fecha.getUTCFullYear() + s + pad(fecha.getUTCMonth() + 1);
-        break;
-      case 'inverse':
-        r = pad(fecha.getUTCMonth() + 1) + s + fecha.getUTCFullYear();
-        break;
-      case 'verbose':
-      case 'veryverbose':
-        r = m + s + fecha.getUTCFullYear();
-        break;
-      }
-
-      if (settings.type == 'day') {
-        if (settings.format == 'normal') {
-          r += s + pad(fecha.getUTCDate());
-        } else {
-          r = pad(fecha.getUTCDate()) + s + r;
-        }
-      }
-
-      return r;
-    };
-
     var colocaFecha = function () {
       fecha = new Date(year, month, day);
-      var texto = generaFecha();
+      var texto = fecha.formatFechitas(settings);
 
       if (tag == 'input') {
         picker.val(texto);
@@ -274,6 +285,7 @@
       activa(this);
 
       if (settings.type == 'month') {
+        day = 1;
         colocaFecha();
         return this;
       }
