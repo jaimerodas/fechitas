@@ -10,10 +10,11 @@
       // verbose -> 31-dic-2014
       // veryverbose -> 31 diciembre 2014
       format: 'normal',
-      capitalized: false
+      capitalized: false,
+      hideOnMobile: true
     }, options);
 
-    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+    if (settings.hideOnMobile && /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
       return this;
     }
 
