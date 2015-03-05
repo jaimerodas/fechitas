@@ -160,6 +160,11 @@
     var showFechitas = function () {
       picker = $(this);
       tag = picker.get(0).nodeName.toLowerCase();
+
+      if (tag == 'input') {
+        picker.attr('type', 'text');
+      }
+
       container = $('.fechitas-container');
 
       updatePicker(this);
@@ -196,8 +201,6 @@
     var initFechitas = function (p) {
       var find, mes, semana = 'D L M M J V S'.split(' ');
       picker = $(p).data('hasFechitas', true);
-
-
 
       find = $('.fechitas-container');
 
