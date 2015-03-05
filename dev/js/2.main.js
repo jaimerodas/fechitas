@@ -1,65 +1,3 @@
-Date.prototype.formatFechitas = function (options) {
-  var months = 'enero febrero marzo abril mayo junio julio agosto septiembre octubre noviembre diciembre'.split(' '),
-    monthsS = 'ene feb mar abr may jun jul ago sep oct nov dic'.split(' ');
-
-  var settings = $.extend({
-    type: 'day',
-    format: 'normal',
-    capitalized: false
-  }, options);
-
-  var m,
-    r = 'invalid format',
-    s = '-';
-
-  if (settings.format == 'verbose') {
-    m = monthsS[this.getMonth()];
-  }
-
-  if (settings.format == 'veryverbose') {
-    m = months[this.getMonth()];
-    s = ' ';
-  }
-
-  if ((settings.format == 'verbose' || settings.format == 'veryverbose') && settings.capitalized) {
-    m = m.capitalize();
-  }
-
-  switch (settings.format) {
-  case 'normal':
-    r = this.getUTCFullYear() + s + pad(this.getUTCMonth() + 1);
-    break;
-  case 'inverse':
-    r = pad(this.getUTCMonth() + 1) + s + this.getUTCFullYear();
-    break;
-  case 'verbose':
-  case 'veryverbose':
-    r = m + s + this.getUTCFullYear();
-    break;
-  }
-
-  if (settings.type == 'day') {
-    if (settings.format == 'normal') {
-      r += s + pad(this.getUTCDate());
-    } else {
-      r = pad(this.getUTCDate()) + s + r;
-    }
-  }
-
-  return r;
-};
-
-String.prototype.capitalize = function () {
-  return this.charAt(0).toUpperCase() + this.slice(1);
-};
-
-var pad = function (n) {
-  if (n < 10) {
-    return '0' + n;
-  }
-  return n;
-};
-
 (function ($) {
 
   $.fn.fechitas = function (options) {
@@ -79,32 +17,15 @@ var pad = function (n) {
       return this;
     }
 
-    $('body').append('<div class="fechitas-container"><div class="fechitas-box"><div class="fechitas-decade fechitas-panel"><div class="fechitas-decade-years"></div></div><div class="fechitas-year fechitas-panel"><button type="button" class="fechitas-chooseDecade fechitas-choose"></button><div class="fechitas-year-months"></div></div><div class="fechitas-month fechitas-panel"><button type="button" class="fechitas-chooseDecade fechitas-choose"></button><button type="button" class="fechitas-chooseYear fechitas-choose"></button><div class="fechitas-month-week" /><div class="fechitas-month-days"></div></div></div></div>');
-
-    var picker, tag, fecha, year, month, day,
-      container = $('body').find('.fechitas-container'),
-      semana = 'D L M M J V S'.split(' '),
+    var picker, tag, fecha, year, month, day, container,
       months = 'enero febrero marzo abril mayo junio julio agosto septiembre octubre noviembre diciembre'.split(' '),
-      monthsS = 'ene feb mar abr may jun jul ago sep oct nov dic'.split(' '),
-      fmonth = container.find('.fechitas-month-week');
-
-    semana.forEach(function (d) {
-      fmonth.append('<div class="fechitas-week-day">' + d + '</div>');
-    });
+      monthsS = 'ene feb mar abr may jun jul ago sep oct nov dic'.split(' ');
 
     var updateNav = function () {
       var dec = year.toString().substr(0, 3);
       container.find('.fechitas-year').find('.fechitas-chooseDecade').val(dec).text(year);
       container.find('.fechitas-month').find('.fechitas-chooseDecade').val(dec).text(year);
       container.find('.fechitas-month').find('.fechitas-chooseYear').val(year).text(months[month].capitalize());
-    };
-
-    // http://stackoverflow.com/questions/1810984/number-of-days-in-any-month
-    var daysInMonth = function (y, m) {
-      if (/8|3|5|10/.test(m)) {return 30; }
-      if (m != 1) {return 31; }
-      if ((y % 4 === 0 && y % 100 !== 0) || y % 400 === 0) {return 29; }
-      return 28;
     };
 
     var buildDecade = function (y, isDecade) {
@@ -200,12 +121,9 @@ var pad = function (n) {
     };
 
     var updatePicker = function (p) {
-      picker = $(p);
-      tag = picker.get(0).nodeName.toLowerCase();
+      var fstring = picker.data('fecha');
 
-      var fechaJSON = picker.data('fecha');
-
-      if (!fechaJSON) {
+      if (!fstring) {
         if (tag == 'input') {
           fecha = picker.val();
         } else {
@@ -222,7 +140,7 @@ var pad = function (n) {
           fecha = new Date();
         }
       } else {
-        fecha = new Date(fechaJSON);
+        fecha = new Date(fstring);
       }
 
       year = fecha.getUTCFullYear();
@@ -238,23 +156,11 @@ var pad = function (n) {
       }
     };
 
-    var colocaFecha = function () {
-      fecha = new Date(year, month, day);
-      var texto = fecha.formatFechitas(settings);
+    var showFechitas = function () {
+      picker = $(this);
+      tag = picker.get(0).nodeName.toLowerCase();
+      container = $('.fechitas-container');
 
-      if (tag == 'input') {
-        picker.val(texto);
-      } else {
-        picker.text(texto);
-      }
-
-      picker.data('fecha', fecha.formatFechitas());
-      container.removeClass('visible');
-
-      picker.trigger('fechitasDateChange', [texto, fecha.formatFechitas()]);
-    };
-
-    var activar = function () {
       updatePicker(this);
 
       if (settings.type == 'month') {
@@ -263,17 +169,58 @@ var pad = function (n) {
         showPanel('.fechitas-month');
       }
 
-      container.addClass('visible');
+      container.addClass('fechitas-visible');
     };
 
-    updatePicker(this);
+    var hideFechitas = function () {
+      container.removeClass('fechitas-visible');
+    };
 
-    picker.on('focus', activar);
-    picker.on('click', activar);
+    var colocaFecha = function () {
+      fecha = new Date(year, month, day);
+      var texto = fecha.fechitasFormat(settings);
 
-    container.on('click', function () {
-      container.removeClass('visible');
-    });
+      if (tag == 'input') {
+        picker.val(texto);
+      } else {
+        picker.text(texto);
+      }
+
+      picker.data('fecha', fecha.fechitasFormat());
+      picker.trigger('fechitasDateChange', [texto, fecha.fechitasFormat()]);
+
+      hideFechitas();
+    };
+
+    var initFechitas = function (p) {
+      var find, mes, semana = 'D L M M J V S'.split(' ');
+      picker = $(p).data('hasFechitas', true);
+
+
+
+      find = $('.fechitas-container');
+
+      if (find.length > 0) {
+        container = find;
+      } else {
+        mes = $('<div class="fechitas-month-week" />');
+        semana.forEach(function (d) {
+          var dia = $('<div class="fechitas-week-day" />').text(d);
+          mes.append(dia);
+        });
+
+        container = $('<div class="fechitas-container" />').append('<div class="fechitas-box"><div class="fechitas-decade fechitas-panel"><div class="fechitas-decade-years"></div></div><div class="fechitas-year fechitas-panel"><button type="button" class="fechitas-chooseDecade fechitas-choose"></button><div class="fechitas-year-months"></div></div><div class="fechitas-month fechitas-panel"><button type="button" class="fechitas-chooseDecade fechitas-choose"></button><button type="button" class="fechitas-chooseYear fechitas-choose"></button><div class="fechitas-month-days"></div></div></div>');
+
+        container.find('.fechitas-month-days').before(mes);
+        $('body').append(container);
+      }
+    };
+
+    initFechitas(this);
+
+    picker.on('focus', showFechitas);
+    picker.on('click', showFechitas);
+    container.on('click', hideFechitas);
 
     container.on('click', '.fechitas-chooseDecade', function (event) {
       var dec = parseInt($(this).val(), 10);

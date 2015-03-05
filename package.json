@@ -1,6 +1,6 @@
 {
   "name": "fechitas",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "homepage": "https://jaimerodas.github.io/fechitas",
   "author": {
     "name": "Jaime Rodas",
@@ -20,6 +20,7 @@
   ],
   "devDependencies": {
     "grunt-contrib-jshint": "~0.10.0",
+    "grunt-contrib-concat": "~0.5.1",
     "grunt-contrib-uglify": "~0.2.0",
     "grunt-contrib-watch": "~0.4.0",
     "grunt-contrib-cssmin": "~0.12.2",

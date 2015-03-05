@@ -10,7 +10,7 @@
   -webkit-transition: all 0.2s ease-out;
   transition: all 0.2s ease-out;
 }
-.fechitas-container.visible {
+.fechitas-container.fechitas-visible {
   opacity: 1;
   visibility: visible;
   -webkit-transition: all 0.2s ease-out;
@@ -34,7 +34,7 @@
   transition: all 0.2s ease-out;
 }
 
-.visible .fechitas-box {
+.fechitas-visible .fechitas-box {
   -webkit-transition: all 0.2s ease-in;
   transition: all 0.2s ease-in;
 
