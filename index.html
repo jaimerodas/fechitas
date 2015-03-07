@@ -7,12 +7,17 @@
 
     <link rel="stylesheet" href="dev/css/fechitas.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-    <script src="dist/fechitas.js"></script>
+    <script src="dev/js/build.js"></script>
     <script>
       $(function() {
         $('#fecha1').fechitas();
         $('#fecha2').fechitas({type: 'month'});
         $('#fecha3').fechitas({hideOnMobile: false});
+
+        fecha = new Date();
+        fecha = $.fn.fechitas.format(fecha);
+
+        $('#formatTest').html(fecha);
       });
     </script>
     <style media="screen">
@@ -26,7 +31,7 @@
 
     <fieldset>
       <label for="fecha1">Basic Example</label>
-      <input type="date" name="fecha1" class="fechitas" id="fecha1">
+      <input type="date" name="fecha1" class="fechitas" id="fecha1" value="2013-01-10">
     </fieldset>
 
     <fieldset>
@@ -38,6 +43,8 @@
       <label for="fecha3">Works on Mobile</label>
       <input type="date" name="fecha3" class="fechitas" id="fecha3">
     </fieldset>
+
+    <div id="formatTest" />
 
   </body>
 </html>

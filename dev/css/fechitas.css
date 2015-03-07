@@ -1,4 +1,4 @@
-.fechitas-container {
+#fechitas-container {
   position: absolute;
   top: 0;
   left: 0;
@@ -10,13 +10,13 @@
   -webkit-transition: all 0.2s ease-out;
   transition: all 0.2s ease-out;
 }
-.fechitas-container.fechitas-visible {
+#fechitas-container.fechitas-visible {
   opacity: 1;
   visibility: visible;
   -webkit-transition: all 0.2s ease-out;
   transition: all 0.2s ease-out;
 }
-.fechitas-box {
+#fechitas-box {
   background-color: #fff;
 
   width: 95%;
@@ -34,7 +34,7 @@
   transition: all 0.2s ease-out;
 }
 
-.fechitas-visible .fechitas-box {
+/* .fechitas-visible  */#fechitas-box {
   -webkit-transition: all 0.2s ease-in;
   transition: all 0.2s ease-in;
 
@@ -54,14 +54,13 @@
 
 .fechitas-panel button {
   display: block;
-  float: left;
   font-family: inherit;
   font-size: 16px;
   line-height: 18px;
   background-color: #ffffff;
   border: none;
   margin: 0;
-  padding: 5px;
+  padding: 10px;
   cursor: pointer;
   outline: none;
 
@@ -76,16 +75,40 @@
   background-color: #ddd;
 }
 
-.fechitas-decade-years button, .fechitas-year-months button {
+.fechitas-els button {
+  float: left;
   width: 50%;
 }
 
-.fechitas-month-days button, .fechitas-month-days .empty {
+#fechitas-month .fechitas-els button,
+#fechitas-month .fechitas-els .empty {
   width: calc(100%/7);
 }
-.fechitas-week-day {
+
+#fechitas-month .fechitas-els .empty {
+  height: 28px;
   float: left;
-  width: calc(100%/7);
+}
+
+.fechitas-nav {
+  display: -webkit-flex;
+  display: flex;
+}
+
+.fechitas-nav button {
+  -webkit-flex: 1;
+  flex: 1;
+}
+
+#fechitas-week {
+  display: -webkit-flex;
+  display: flex;
+}
+
+.fechitas-weekday {
+  -webkit-flex: 1;
+  flex: 1;
+
   border-bottom: 1px solid #bbb;
 
   color: #888;
@@ -123,17 +146,14 @@
 }
 
 @media screen and (min-width: 480px) {
-  .fechitas-box {
-    width: 400px;
+  #fechitas-box {
+    width: 460px;
   }
 }
 
 @media screen and (min-width: 640px) {
-  .fechitas-box {
+  #fechitas-box {
     width: 500px;
-  }
-  .fechitas-panel button {
-    padding: 10px;
   }
   .fechitas-month-days .empty {
     height: 38px;
@@ -141,14 +161,14 @@
 }
 
 @media screen and (min-width: 960px) {
-  .fechitas-box {
-    width: 700px;
+  #fechitas-box {
+    width: 600px;
   }
   .fechitas-panel button {
     font-size: 18px;
     line-height: 24px;
   }
-  .fechitas-week-day {
+  .fechitas-weekday {
     font-size: 14px;
   }
   .fechitas-month-days .empty {

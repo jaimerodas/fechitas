@@ -1,6 +1,3 @@
-/*! fechitas - v0.5.0 - 2015-03-06
-* https://jaimerodas.github.io/fechitas
-* Copyright (c) 2015 Jaime Rodas; Licensed MIT */
 (function ($, window, document, undefined) {
 
     var $element,
