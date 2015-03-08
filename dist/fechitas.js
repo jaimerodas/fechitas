@@ -1,4 +1,4 @@
-/*! fechitas - v0.5.0 - 2015-03-06
+/*! fechitas - v0.5.0 - 2015-03-08
 * https://jaimerodas.github.io/fechitas
 * Copyright (c) 2015 Jaime Rodas; Licensed MIT */
 (function ($, window, document, undefined) {
@@ -195,7 +195,7 @@
     }
 
     function initDate() {
-        var date = $element.data(n + 'fecha'),
+        var date = $element.data(n + 'date'),
             tag = $element.get(0).nodeName.toLowerCase();
 
         if (!date) {
@@ -215,6 +215,21 @@
                 date = new Date();
             }
         }
+
+        if (Object.prototype.toString.call(date) !== "[object Date]" || isNaN(date.getTime())) {
+            date = new Date(date);
+        }
+
+        console.log(date);
+
+        if (date.getTimezoneOffset() !== 0) {
+            ldate = new Date();
+            ldate.setTime(date.getTime() + (date.getTimezoneOffset() * 60 * 1000));
+            date = ldate;
+        }
+
+        console.log(date);
+
         return date;
     }
 
@@ -231,6 +246,8 @@
             } else {
                 $element.text(text);
             }
+
+            $element.trigger('fechitasDateChange');
         }
     }
 
@@ -340,11 +357,11 @@
             s = '-';
 
         if (settings.format == 'verbose') {
-            m = mesesShort[fecha.getMonth()];
+            m = monthsShort[fecha.getMonth()];
         }
 
         if (settings.format == 'veryverbose') {
-            m = mesesFull[fecha.getMonth()];
+            m = monthsLong[fecha.getMonth()];
             s = ' ';
         }
 

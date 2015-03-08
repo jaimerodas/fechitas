@@ -13,6 +13,7 @@
         $('#fecha1').fechitas();
         $('#fecha2').fechitas({type: 'month'});
         $('#fecha3').fechitas({hideOnMobile: false});
+        $('#fecha4').fechitas({format: 'verbose'});
 
         fecha = new Date();
         fecha = $.fn.fechitas.format(fecha);
@@ -44,7 +45,9 @@
       <input type="date" name="fecha3" class="fechitas" id="fecha3">
     </fieldset>
 
-    <div id="formatTest" />
+    <div id="formatTest"></div>
+
+    <h2 data-fechitas-date="1988-08-10" id="fecha4">10-ago-1988</h2>
 
   </body>
 </html>
