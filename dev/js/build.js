@@ -217,15 +217,11 @@
             date = new Date(date);
         }
 
-        console.log(date);
-
         if (date.getTimezoneOffset() !== 0) {
             ldate = new Date();
             ldate.setTime(date.getTime() + (date.getTimezoneOffset() * 60 * 1000));
             date = ldate;
         }
-
-        console.log(date);
 
         return date;
     }
